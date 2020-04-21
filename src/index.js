@@ -1,55 +1,91 @@
-import React from 'react'
+import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 
-const Header = (props) =>{
+
+const Button = (props) => {
   return(
-    <h1>{props.text}</h1>
+    <button onClick={props.handleClick}>{props.text}</button>
+  )
+} 
+
+const StatisticsLine = (props) => {
+  return(
+    <table>
+      <tbody>
+    <tr>
+      <td>{props.text}</td><td>{props.value}</td>
+    </tr>
+
+      </tbody>
+    </table>
   )
 }
 
-const Part = (props) =>{
+const Statistics = (props) => {
   return(
-    <p>{props.part} {props.ex}</p>
+    <>
+    <StatisticsLine text='good' value={props.value1} />  
+    <StatisticsLine text='neutral' value={props.value2} />
+    <StatisticsLine text='bad' value={props.value3} />
+    <StatisticsLine text='total' value={props.value1+props.value2+props.value3} />
+    <StatisticsLine text='average' value={(props.value1-props.value3)/(props.value1+props.value2+props.value3)} />
+    <StatisticsLine text='positive' value={(props.value1/(props.value1+props.value2+props.value3))*100} />
+    </>
   )
 }
 
-const Content = (props) =>{  
+const Conditional = (props) => {
+  if(props.value1 === 0 && props.value2 === 0 && props.value3 === 0) return <p>no feedback given</p>
   return(
-    <div>
-      <Part part = {props.p1} ex = {props.ex1} />
-      <Part part = {props.p2} ex = {props.ex2} />
-      <Part part = {props.p3} ex = {props.ex3} />
-    </div>
+    <>
+    <Statistics value1 = {props.value1} value2={props.value2} value3={props.value3} />
+    </>
   )
 }
-
-const Total = (props) =>{
-  return(
-   <p>Number of exercises {props.sum}</p>
-  )
-}
-
 
 const App = () => {
-  const course = 'Half Stack application development'
-  const part1 = 'Fundamentals of React'
-  const exercises1 = 10
-  const part2 = 'Using props to pass data'
-  const exercises2 = 7
-  const part3 = 'State of a component'
-  const exercises3 = 14
+  // tallenna napit omaan tilaansa
+  const [good, setGood] = useState(0)
+  const [neutral, setNeutral] = useState(0)
+  const [bad, setBad] = useState(0)
+
+  const increaseGood = () => {
+    return(
+      setGood(good + 1)
+ 
+   )
+  }
+
+  const increaseNeutral = () =>{
+    return(
+      setNeutral(neutral + 1)
+    )
+  } 
+    
+  
+  const increaseBad = () => {
+   return(
+     setBad(bad + 1)
+   )
+  }
 
   return (
+    <>
     <div>
-      <Header text={course}/>
-      <Content 
-      p1={part1} ex1={exercises1}
-      p2={part2} ex2={exercises2}
-      p3={part3} ex3={exercises3}
-       />
-      <Total sum={exercises1+exercises2+exercises3} />
+      <h1>Give feedback</h1>
+      <Button handleClick={increaseGood} text='good' />
+      <Button handleClick={increaseNeutral} text='neutral' />
+      <Button handleClick={increaseBad} text='bad' />
     </div>
+    <div>
+      <h1>statistics</h1>
+      <Conditional value1={good} value2={neutral} value3={bad} />
+    </div>
+    </>
+    
   )
 }
 
-ReactDOM.render(<App />, document.getElementById('root'))
+ReactDOM.render(<App />, 
+  document.getElementById('root')
+)
